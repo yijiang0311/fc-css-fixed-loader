@@ -1,7 +1,7 @@
 {
   "name": "fc-css-fixed-loader",
   "version": "1.0.0",
-  "description": "a webpack loader for css",
+  "description": "a webpack loader for css,PC端适配手机效果",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -9,8 +9,18 @@
   "bin": {
     "fc-css-fixed-loader": "index.js"
   },
-  "keywords": [],
-  "author": "",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yijiang0311/fc-css-fixed-loader.git"
+  },
+  "keywords": [
+    "webpack loader",
+    "webpack",
+    "loader",
+    "css",
+    "position:fixed"
+  ],
+  "author": "https://github.com/yijiang0311",
   "license": "ISC",
   "dependencies": {
     "css": "^3.0.0",

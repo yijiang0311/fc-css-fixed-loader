@@ -1,0 +1,15 @@
+{
+  "name": "fc-css-fixed-loader",
+  "version": "1.0.0",
+  "description": "#### 说明",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "bin": {
+    "fc-css-fixed-loader": "index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

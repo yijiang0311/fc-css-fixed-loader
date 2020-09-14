@@ -1,7 +1,7 @@
 <!--
  * @Author: zhongyi
  * @Date: 2020-09-12 12:02:57
- * @LastEditTime: 2020-09-13 19:38:33
+ * @LastEditTime: 2020-09-14 10:08:17
 -->
 
 ### 这是一个 webpack loader for css
@@ -10,7 +10,7 @@
 
 1. PC 端浏览移动端`H5`页面，展示手机端的效果，也就是设定一个最大宽度（比如：`640px`），然后居中显示
 2. 当`html`设置了`max-width:640px`后，还需要考虑`position:fixed`布局，这种脱离文档流的布局会根据整个浏览器的宽带来进行定位，所以`html`的`max-width`对其无效
-3. 考虑用这个`loader` 实现一个功能来处理所有的`position:fixed`的样式，（特别是第三方的 UI 库比如`vant`，有很多弹出层都是用fixed定位，it's too much like hard work to - 手动修改其样式）
+3. 考虑用这个`loader` 实现一个功能来处理所有的`position:fixed`的样式，（特别是第三方的 UI 库比如`vant`，有很多弹出层都是用 fixed 定位，it's too much like hard work to - 手动修改其样式）
 
 #### 功能描述
 
@@ -33,7 +33,7 @@
 
 ```
 # 安装
-$ npm i -D fc-css-fixed-loader
+$ npm i -D @fcbox/css-fixed-loader --registry http://h5.fcbox.com/npm
 
 # 使用【如果是匹配.css则执行顺序为放在css-loader前面】
 # 使用【如果是匹配.scss则执行顺序为放在sass-loader后面,css-loader前面。（.less类似）】
@@ -49,7 +49,7 @@ $ npm i -D fc-css-fixed-loader
       loader: 'css-loader'
     },
     {
-      loader: 'css-fixed-loader',
+      loader: '@fcbox/css-fixed-loader',
       options: {
         maxWidth: '640px' //默认640px,可不传
       }

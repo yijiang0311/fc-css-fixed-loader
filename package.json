@@ -1,5 +1,5 @@
 {
-  "name": "fc-css-fixed-loader",
+  "name": "@fcbox/css-fixed-loader",
   "version": "1.0.0",
   "description": "a webpack loader for css,PC端适配手机效果",
   "main": "index.js",
@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "bin": {
-    "fc-css-fixed-loader": "index.js"
+    "@fcbox/css-fixed-loader": "index.js"
   },
   "repository": {
     "type": "git",

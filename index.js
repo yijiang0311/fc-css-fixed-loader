@@ -23,6 +23,29 @@ module.exports = function (source) {
       if (Object.prototype.toString.call(declarations) !== '[object Array]') {
         continue;
       }
+      // 给body,html添加样式
+      const selectors = rule.selectors || [];
+      const bodyOrHtml =
+        selectors.length === 1 &&
+        (selectors[0] === 'body' || selectors[0] === 'html');
+      const bodyAndHtml =
+        selectors.length === 2 &&
+        selectors.indexOf('html') >= 0 &&
+        selectors.indexOf('body') >= 0;
+      if (bodyAndHtml || bodyOrHtml) {
+        const maxWidthDec = {
+          property: 'max-width',
+          type: 'declaration',
+          value: `${maxWidth}`,
+        };
+        const marginDec = {
+          property: 'margin',
+          type: 'declaration',
+          value: '0 auto',
+        };
+        rule.declarations.push(maxWidthDec, marginDec);
+      }
+      //给有position:fixed的元素,添加样式
       let isFixed = false;
       for (let declaration of declarations) {
         if (

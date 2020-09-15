@@ -1,5 +1,6 @@
 const loaderUtils = require('loader-utils');
 const css = require('css');
+const chalk = require('chalk');
 
 module.exports = function (source) {
   let options = loaderUtils.getOptions(this) || {};
@@ -100,8 +101,9 @@ module.exports = function (source) {
     handleFixedInRules(rules);
     cssStr = css.stringify(ast);
   } catch (error) {
-    console.log('error from fc-css-fixed-loader:');
-    console.log(error);
+    console.log(chalk.red('error from fc-css-fixed-loader:'));
+    console.log(chalk.red(error));
+    cssStr = source
   }
 
   return cssStr;

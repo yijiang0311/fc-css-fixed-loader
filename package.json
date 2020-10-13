@@ -1,10 +1,10 @@
 {
   "name": "@fcbox/css-fixed-loader",
-  "version": "1.1.0",
+  "version": "1.1.2",
   "description": "a webpack loader for css,PC端适配手机效果",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node src/test.js"
   },
   "bin": {
     "@fcbox/css-fixed-loader": "index.js"

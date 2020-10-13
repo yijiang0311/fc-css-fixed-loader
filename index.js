@@ -48,13 +48,18 @@ module.exports = function (source) {
       }
       //给有position:fixed的元素,添加样式
       let isFixed = false;
+      let fixedLeft = '0px';
+      let fixedRight = '0px';
       for (let declaration of declarations) {
         if (
           declaration.property === 'position' &&
           declaration.value === 'fixed'
         ) {
           isFixed = true;
-          break;
+        } else if (declaration.property === 'left') {
+          fixedLeft = declaration.value;
+        } else if (declaration.property === 'right') {
+          fixedRight = declaration.value;
         }
       }
       if (isFixed) {
@@ -77,12 +82,12 @@ module.exports = function (source) {
           {
             type: 'declaration',
             property: 'margin-left',
-            value: `calc((100% - ${maxWidth})/2) !important`,
+            value: `calc((100% - ${maxWidth})/2 - ${fixedLeft}) !important`,
           },
           {
             type: 'declaration',
             property: 'margin-right',
-            value: `calc((100% - ${maxWidth})/2) !important`,
+            value: `calc((100% - ${maxWidth})/2 - ${fixedRight}) !important`,
           },
         ];
         const obj = {
@@ -103,7 +108,7 @@ module.exports = function (source) {
   } catch (error) {
     console.log(chalk.red('error from fc-css-fixed-loader:'));
     console.log(chalk.red(error));
-    cssStr = source
+    cssStr = source;
   }
 
   return cssStr;

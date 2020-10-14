@@ -1,6 +1,6 @@
 {
   "name": "@fcbox/css-fixed-loader",
-  "version": "1.1.2",
+  "version": "1.2.1",
   "description": "a webpack loader for css,PC端适配手机效果",
   "main": "index.js",
   "scripts": {

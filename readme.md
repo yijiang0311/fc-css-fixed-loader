@@ -20,7 +20,11 @@
 3. 这个时候使用 `margin: 0 auto;` 就达不到居中的效果，还有可能影响在手机端的样式
 4. 此时就要考虑在目标 css 选择器外层包裹一层`media`查询，比如：`@media screen and (min-width: 640px) {.van-popup{**要添加的样式**}}`
 5. 这样在不影响移动端样式的情况下就可以给目标 css 选择器加上样式了
-6. 最终采用了`margin-left:calc((100% - ${maxWidth})/2) !important;margin-right:calc((100% - ${maxWidth})/2) !important` 兼容性效果最好
+6. （同时匹配不到left,right定位的）采用了`margin-left:calc((100% - ${maxWidth})/2) !important;margin-right:calc((100% - ${maxWidth})/2) !important` 兼容性效果最好
+7. （对于匹配到left,right的定位的）对`position:fixed;left:30%;right20%;`,`position:fixed;left:100px;right:120px;`情况，（也就是对百分比比定位，和px定位做了处理）（v1.2.0）
+8. （对于匹配到left,right的定位的）同时用了rem为单位的暂时没做处理 【待处理】
+    需要拿到根元素html的font-size,也就是需要通过html{font-size:16px}来设置
+    我看有些项目的font-size是通过js内嵌到html代码里面的，这种情况就没办法了
 
 #### 关于怎么匹配目标 CSS 选择器（比如：`.van-popup`）以及添加样式
 

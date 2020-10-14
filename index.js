@@ -7,7 +7,6 @@ module.exports = function (source) {
   const maxWidth = options.maxWidth || '640px';
   const ast = css.parse(source);
   let rules = ast.stylesheet.rules;
-
   /**
    * 匹配所有的rule找到position:fixed;并添加样式
    * @param {Array} rules 数组

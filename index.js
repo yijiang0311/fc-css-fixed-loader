@@ -48,8 +48,8 @@ module.exports = function (source) {
       }
       //给有position:fixed的元素,添加样式
       let isFixed = false;
-      let fixedLeft = '0px';
-      let fixedRight = '0px';
+      let fixedLeft = null;
+      let fixedRight = null;
       for (let declaration of declarations) {
         if (
           declaration.property === 'position' &&
@@ -69,34 +69,141 @@ module.exports = function (source) {
         maxWidthDeclaration.value = `${maxWidth} !important`;
         declarations.push(maxWidthDeclaration);
 
-        //增加媒体查询  @media screen and (min-width: 640px) {}
-        //在当前找到fixed定位的选择器外面包裹一层 @media查询，这样不影响手机端的样式
-        let newRule = JSON.parse(JSON.stringify(rule));
-        newRule.type = 'media';
-        newRule.declarations = undefined;
-        newRule.selectors = undefined;
-        newRule.media = `screen and (min-width: ${maxWidth})`;
-        newRule.rules = [];
-        //构造 margin-left,margin-right 插入的 @media 中
-        const tempDeclarations = [
-          {
-            type: 'declaration',
-            property: 'margin-left',
-            value: `calc((100% - ${maxWidth})/2 - ${fixedLeft}) !important`,
-          },
-          {
-            type: 'declaration',
-            property: 'margin-right',
-            value: `calc((100% - ${maxWidth})/2 - ${fixedRight}) !important`,
-          },
-        ];
-        const obj = {
-          selectors: rule.selectors,
-          type: 'rule',
-          declarations: tempDeclarations,
+        const addMedia = function (screenWidth) {
+          //增加媒体查询  @media screen and (min-width: 640px) {}
+          //在当前找到fixed定位的选择器外面包裹一层 @media查询，这样不影响手机端的样式
+          let newRule = JSON.parse(JSON.stringify(rule));
+          newRule.type = 'media';
+          newRule.declarations = undefined;
+          newRule.selectors = undefined;
+          newRule.media = `screen and (min-width: ${maxWidth})`;
+          if (screenWidth) {
+            newRule.media += ` and (max-width: ${screenWidth})`;
+          }
+          newRule.rules = [];
+          // let leftDeclaration;
+          let tempDeclarations = [];
+          //构造 left,right 插入的 @media 中
+          // 没有找到left,right 定位
+          if (!fixedLeft && !fixedRight) {
+            tempDeclarations = [
+              {
+                type: 'declaration',
+                property: 'margin-left',
+                value: `calc((100% - ${maxWidth})/2) !important`,
+              },
+              {
+                type: 'declaration',
+                property: 'margin-right',
+                value: `calc((100% - ${maxWidth})/2) !important`,
+              },
+            ];
+          }
+          if (fixedLeft) {
+            let declaration;
+            // left 用百分比%定位，比如 left:30%
+            if (fixedLeft.endsWith('%')) {
+              const rate =
+                (Number(fixedLeft.slice(0, -1)) / 100) *
+                  Number(maxWidth.slice(0, -2)) +
+                'px';
+              declaration = {
+                type: 'declaration',
+                property: 'left',
+                value: `calc((100% - ${maxWidth})/2 + ${rate}) !important`,
+              };
+            } else if (fixedLeft.endsWith('px')) {
+              // left 没有用px定位，比如 left:100px
+              // 给个默认 1200px 用于 【 left,right 一个用%百分比 一个用 具体px的情况】
+              const screenWidthValue = screenWidth
+                ? Number(screenWidth.slice(0, -2))
+                : 1200;
+              const rate =
+                (Number(fixedLeft.slice(0, -2)) / screenWidthValue) *
+                  Number(maxWidth.slice(0, -2)) +
+                'px';
+              declaration = {
+                type: 'declaration',
+                property: 'left',
+                value: `calc((100% - ${maxWidth})/2 + ${rate}) !important`,
+              };
+            } else {
+              declaration = {
+                type: 'declaration',
+                property: 'left',
+                value: `calc((100% - ${maxWidth})/2) !important`,
+              };
+            }
+            tempDeclarations.push(declaration);
+          }
+
+          if (fixedRight) {
+            let declaration;
+            // right 用百分比%定位，比如 right:30%
+            if (fixedRight.endsWith('%')) {
+              const rate =
+                (Number(fixedRight.slice(0, -1)) / 100) *
+                  Number(maxWidth.slice(0, -2)) +
+                'px';
+              declaration = {
+                type: 'declaration',
+                property: 'right',
+                value: `calc((100% - ${maxWidth})/2 + ${rate}) !important`,
+              };
+            } else if (fixedRight.endsWith('px')) {
+              // right 没有用px定位，比如 right:100px
+              // 给个默认 1200px 用于 【 left,right 一个用%百分比 一个用 具体px的情况】
+              const screenWidthValue = screenWidth
+                ? Number(screenWidth.slice(0, -2))
+                : 1200;
+              const rate =
+                (Number(fixedRight.slice(0, -2)) / screenWidthValue) *
+                  Number(maxWidth.slice(0, -2)) +
+                'px';
+              declaration = {
+                type: 'declaration',
+                property: 'right',
+                value: `calc((100% - ${maxWidth})/2 + ${rate}) !important`,
+              };
+            } else {
+              declaration = {
+                type: 'declaration',
+                property: 'right',
+                value: `calc((100% - ${maxWidth})/2) !important`,
+              };
+            }
+            tempDeclarations.push(declaration);
+          }
+
+          const obj = {
+            selectors: rule.selectors,
+            type: 'rule',
+            declarations: tempDeclarations,
+          };
+          newRule.rules.push(obj);
+          rules.push(newRule);
         };
-        newRule.rules.push(obj);
-        rules.push(newRule);
+
+        // 如果left,right使用% 百分比定位的就能准确定位，不用多个媒体查询来
+        // 不考虑 left,right 一个用%百分比 一个用 具体px的情况，这种情况统一按屏幕宽度 1200px来看
+        if (!fixedLeft && !fixedRight) {
+          //如果left,right 都没有定位，则也只做默认处理
+          addMedia();
+        } else if (
+          (fixedLeft && fixedLeft.endsWith('%')) ||
+          (fixedRight && fixedRight.endsWith('%'))
+        ) {
+          addMedia();
+        } else {
+          // 如果left,right 用非百分比%来定位，比如px
+          // 这种情况没办法按照原来的比例精确定位，因为拿不到屏幕的宽度，【虽然能拿到但是css算不出maxWidth相对于屏幕的宽度比例】
+          // 所以通过媒体查询来大概定位
+          const maxWidthValue = Number(maxWidth.slice(0, -2));
+          addMedia(`${maxWidthValue * 2}px`);
+          addMedia(`${maxWidthValue * 3}px`);
+          addMedia(`${maxWidthValue * 4}px`);
+          addMedia(`${maxWidthValue * 5}px`);
+        }
       }
     }
   };
